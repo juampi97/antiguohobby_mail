@@ -31,6 +31,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/mail", async (req, res) => {
+  console.log(req.body)
   const {nombre, email, telefono, mensaje} = req.body
   try {
     let result = await transport.sendMail({
