@@ -44,10 +44,10 @@ app.post("/mail", async (req, res) => {
       subject: "Correo de prueba",
       html: `
         <div>
-            <h3> Nombre: ${nombre}</h3>
-            <h3> Email: ${email}</h3>
-            <h3> Telefono: ${telefono}</h3>
-            <h3> Mensaje: ${mensaje}</h3>
+            <p> Nombre: ${nombre}</p>
+            <p> Email: ${email}</p>
+            <p> Telefono: ${telefono}</p>
+            <p> Mensaje: ${mensaje}</p>
         </div>
         `,
       attachments: [],
