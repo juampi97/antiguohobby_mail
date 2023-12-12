@@ -3,6 +3,8 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
 const app = express();
+app.use(express.urlencoded({extended: false}));
+app.use(express.json());
 
 dotenv.config();
 
