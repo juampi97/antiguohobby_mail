@@ -31,6 +31,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/mail", async (req, res) => {
+  const {nombre, email, telefono, mensaje} = req.body
   try {
     let result = await transport.sendMail({
       from: `"Prueba" <${process.env.APP_USER}>`,
@@ -38,7 +39,10 @@ app.post("/mail", async (req, res) => {
       subject: "Correo de prueba",
       html: `
         <div>
-            <h1>Esto es una prueba</h1>
+            <h3> Nombre: ${nombre}</h3>
+            <h3> Email: ${email}</h3>
+            <h3> Telefono: ${telefono}</h3>
+            <h3> Mensaje: ${mensaje}</h3>
         </div>
         `,
       attachments: [],
