@@ -1,8 +1,10 @@
 import express from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import cors from 'cors'
 
 const app = express();
+app.use(cors())
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
@@ -55,3 +57,4 @@ app.post("/mail", async (req, res) => {
     res.status(400).json({ status: "error", mensaje: error });
   }
 });
+ 
