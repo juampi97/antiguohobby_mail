@@ -52,8 +52,7 @@ app.post("/mail", async (req, res) => {
     url: verifyUrl,
     method: "POST",
   }).then(({ data }) => {
-    console.log(data.success);
-
+    // console.log(data.success);
     if (data.success) {
       try {
         let result = transport.sendMail({
