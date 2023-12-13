@@ -56,9 +56,9 @@ app.post("/mail", async (req, res) => {
     if (data.success) {
       try {
         let result = transport.sendMail({
-          from: `"Prueba" <${process.env.APP_USER}>`,
+          from: `"Antiguohobby" <${process.env.APP_USER}>`,
           to: "juampicalabro97@gmail.com",
-          subject: "Correo de prueba",
+          subject: "Solicitud cotizacion Antiguohobby",
           html: `
         <div>
             <p> Nombre: ${nombre}</p>
