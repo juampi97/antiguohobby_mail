@@ -14,6 +14,7 @@ dotenv.config();
 const port = process.env.PORT || 8080;
 
 const secret_key = process.env.SECRET_KEY;
+// const secret_key = "";
 
 app.listen(port, () => {
   console.log(`Corriendo app en puerto ${port}`);
@@ -41,43 +42,42 @@ app.post("/mail", async (req, res) => {
   const { nombre, email, telefono, mensaje, captcha } = req.body;
 
   if (!captcha) {
-    res
-      .status(400)
-      .json({ status: "error", mensaje: "Captcha token undefined" });
+    return res.status(400).json({ status: "error", mensaje: "Captcha token undefined" });
   }
 
-  const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secret_key}&response=${captcha}`;
+  try {
+    // Validar reCAPTCHA
+    const { data } = await axios.post("https://www.google.com/recaptcha/api/siteverify", null, {
+      params: {
+        secret: secret_key,
+        response: captcha,
+      },
+    });
 
-  axios({
-    url: verifyUrl,
-    method: "POST",
-  }).then(({ data }) => {
-    // console.log(data.success);
-    if (data.success) {
-      try {
-        let result = transport.sendMail({
-          from: `"Antiguohobby" <${process.env.APP_USER}>`,
-          to: "juampicalabro97@gmail.com",
-          subject: "Solicitud cotizacion Antiguohobby",
-          html: `
-        <div>
-            <p> Nombre: ${nombre}</p>
-            <p> Email: ${email}</p>
-            <p> Telefono: ${telefono}</p>
-            <p> Mensaje: ${mensaje}</p>
-        </div>
-        `,
-          attachments: [],
-        });
-        res.status(200).json({ status: "ok", mensaje: 'Mensaje Enviado!' });
-      } catch (error) {
-        res.status(400).json({ status: "error", mensaje: 'Error al enviar el mensaje. Intenta nuevamente mas tarde.' });
-      }
-    } else {
-      return res.json({
-        status: "error",
-        mensaje: "Debes ser un robot",
-      });
+    if (!data.success) {
+      return res.status(400).json({ status: "error", mensaje: "Validación reCAPTCHA fallida" });
     }
-  });
+
+    // Enviar correo
+    await transport.sendMail({
+      from: `"Antiguohobby" <${process.env.APP_USER}>`,
+      to: "juampicalabro97@gmail.com",
+      subject: "Solicitud cotización Antiguohobby",
+      html: `
+        <div>
+          <p><strong>Nombre:</strong> ${nombre}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Teléfono:</strong> ${telefono}</p>
+          <p><strong>Mensaje:</strong> ${mensaje}</p>
+        </div>
+      `,
+    });
+
+    return res.status(200).json({ status: "ok", mensaje: "Mensaje Enviado!" });
+
+  } catch (error) {
+    console.error("Error en el servidor:", error);
+    return res.status(500).json({ status: "error", mensaje: "Error en el servidor, intenta más tarde." });
+  }
 });
+
